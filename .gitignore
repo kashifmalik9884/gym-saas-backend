@@ -5,7 +5,8 @@ target/
 !**/src/test/**/target/
 ### Spring Configuration ###
 **/src/main/resources/application.properties
-**/src/main/resources/application.yml
+**/src/main/resources/application-staging.properties
+**/src/main/resources/application-prod.properties
 
 ### STS ###
 .apt_generated
