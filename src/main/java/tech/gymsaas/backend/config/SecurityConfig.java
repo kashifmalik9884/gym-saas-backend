@@ -121,8 +121,8 @@ public CorsConfigurationSource corsConfigurationSource() {
     configuration.setAllowedOrigins(List.of(
             "http://localhost:5173",
             "http://localhost:3000",
-            "https://frontend-ahgr.onrender.com",  // The one with 'h'
-            "https://frontend-abgr.onrender.com"   // The one with 'b'
+            "https://gym-saas.app",       // Main root domain
+            "https://www.gym-saas.app"  
     ));
     
     // 2. Allow all common HTTP verbs
