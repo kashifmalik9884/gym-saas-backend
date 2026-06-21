@@ -114,21 +114,29 @@ public class SecurityConfig {
     }
 
     @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of(
-                "http://localhost:5173",
-                "http://localhost:3000",
-                "https://https://frontend-ahgr.onrender.com"
-        ));
-        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
-        configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "X-Requested-With"));
-        configuration.setExposedHeaders(List.of("Authorization"));
-        configuration.setAllowCredentials(true);
-        configuration.setMaxAge(3600L);
+public CorsConfigurationSource corsConfigurationSource() {
+    CorsConfiguration configuration = new CorsConfiguration();
+    
+    // 1. Cover both potential URL variations to prevent string mismatch bugs
+    configuration.setAllowedOrigins(List.of(
+            "http://localhost:5173",
+            "http://localhost:3000",
+            "https://frontend-ahgr.onrender.com",  // The one with 'h'
+            "https://frontend-abgr.onrender.com"   // The one with 'b'
+    ));
+    
+    // 2. Allow all common HTTP verbs
+    configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
+    
+    // 3. Open up allowed headers completely so nothing gets caught in preflight
+    configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "X-Requested-With", "Cache-Control", "Accept"));
+    
+    configuration.setExposedHeaders(List.of("Authorization"));
+    configuration.setAllowCredentials(true);
+    configuration.setMaxAge(3600L);
 
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-        return source;
-    }
+    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+    source.registerCorsConfiguration("/**", configuration);
+    return source;
+}
 }
