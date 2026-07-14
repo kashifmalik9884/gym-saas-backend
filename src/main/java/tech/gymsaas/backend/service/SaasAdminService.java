@@ -110,6 +110,15 @@ public class SaasAdminService {
                 .orElseThrow(() -> new ResourceNotFoundException("Gym not found"));
         return toResponse(gym);
     }
+    @Transactional
+    public void deleteGym(Long gymId) {
+    Gym gym = gymRepository.findById(gymId)
+            .orElseThrow(() -> new ResourceNotFoundException("Gym not found"));
+             userRepository.findByGymIdAndRole(gymId, "OWNER")
+            .ifPresent(userRepository::delete);
+            renewalLogRepository.deleteByGymId(gymId);
+            gymRepository.delete(gym);
+    }
 
     @Transactional(isolation = org.springframework.transaction.annotation.Isolation.READ_COMMITTED)
     public GymResponse createGym(CreateGymRequest request) {
