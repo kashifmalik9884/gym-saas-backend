@@ -31,17 +31,19 @@ public class SaasAdminService {
     private final PasswordEncoder passwordEncoder;
     private final RefreshTokenRepository refreshTokenRepository;
 
-    public SaasAdminService(GymRepository gymRepository,
-                            GymRenewalLogRepository renewalLogRepository,
-                            UserRepository userRepository,
-                            SaasAdminUserRepository saasAdminUserRepository,
-                            PasswordEncoder passwordEncoder) {
-        this.gymRepository = gymRepository;
-        this.renewalLogRepository = renewalLogRepository;
-        this.userRepository = userRepository;
-        this.saasAdminUserRepository = saasAdminUserRepository;
-        this.passwordEncoder = passwordEncoder;
-    }
+  public SaasAdminService(GymRepository gymRepository,
+                        GymRenewalLogRepository renewalLogRepository,
+                        UserRepository userRepository,
+                        SaasAdminUserRepository saasAdminUserRepository,
+                        RefreshTokenRepository refreshTokenRepository,
+                        PasswordEncoder passwordEncoder) {
+    this.gymRepository = gymRepository;
+    this.renewalLogRepository = renewalLogRepository;
+    this.userRepository = userRepository;
+    this.saasAdminUserRepository = saasAdminUserRepository;
+    this.refreshTokenRepository = refreshTokenRepository;
+    this.passwordEncoder = passwordEncoder;
+}
 
     @Transactional(readOnly = true)
     public List<GymResponse> getAllGyms() {
