@@ -110,21 +110,28 @@ public class SaasAdminService {
                 .orElseThrow(() -> new ResourceNotFoundException("Gym not found"));
         return toResponse(gym);
     }
-    @Transactional
+  @Transactional
     public void deleteGym(Long gymId) {
     Gym gym = gymRepository.findById(gymId)
             .orElseThrow(() -> new ResourceNotFoundException("Gym not found"));
 
-    // Delete related renewal logs
-            renewalLogRepository.deleteByGym_Id(gymId);
+    // 1. Find OWNER user for this gym
+            var ownerOpt = userRepository.findByGymIdAndRole(gymId, "OWNER");
 
-    // Delete owner user (if not cascaded)
-            userRepository.findByGymIdAndRole(gymId, "OWNER")
-            .ifPresent(userRepository::delete);
+            ownerOpt.ifPresent(owner -> {
+        // 2. Delete all refresh tokens for this user to satisfy FK constraint
+            refreshTokenRepository.deleteByUser_Id(owner.getId());
 
-    // Finally delete gym
-            gymRepository.delete(gym);
-    }
+        // 3. Delete the owner user
+            userRepository.delete(owner);
+            });
+
+    // 4. Delete renewal logs for this gym (if FK exists)
+        renewalLogRepository.deleteByGym_Id(gymId);
+
+    // 5. Finally delete the gym
+        gymRepository.delete(gym);
+}
 
     @Transactional(isolation = org.springframework.transaction.annotation.Isolation.READ_COMMITTED)
     public GymResponse createGym(CreateGymRequest request) {
