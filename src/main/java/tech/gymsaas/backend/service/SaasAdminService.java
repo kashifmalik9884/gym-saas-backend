@@ -13,6 +13,7 @@ import tech.gymsaas.backend.repository.GymRenewalLogRepository;
 import tech.gymsaas.backend.repository.GymRepository;
 import tech.gymsaas.backend.repository.SaasAdminUserRepository;
 import tech.gymsaas.backend.repository.UserRepository;
+import tech.gymsaas.backend.repository.RefreshTokenRepository;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -28,6 +29,7 @@ public class SaasAdminService {
     private final UserRepository userRepository;
     private final SaasAdminUserRepository saasAdminUserRepository;
     private final PasswordEncoder passwordEncoder;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     public SaasAdminService(GymRepository gymRepository,
                             GymRenewalLogRepository renewalLogRepository,
