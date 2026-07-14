@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface GymRenewalLogRepository extends JpaRepository<GymRenewalLog, Long> {
     List<GymRenewalLog> findByGym_IdOrderByCreatedAtDesc(Long gymId);
-    void deleteByGym_Id(Long gymId);
+    void deleteByGymId(Long gymId);
 }
