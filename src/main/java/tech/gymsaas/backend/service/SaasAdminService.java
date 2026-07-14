@@ -114,9 +114,15 @@ public class SaasAdminService {
     public void deleteGym(Long gymId) {
     Gym gym = gymRepository.findById(gymId)
             .orElseThrow(() -> new ResourceNotFoundException("Gym not found"));
-             userRepository.findByGymIdAndRole(gymId, "OWNER")
+
+    // Delete related renewal logs
+            renewalLogRepository.deleteByGym_Id(gymId);
+
+    // Delete owner user (if not cascaded)
+            userRepository.findByGymIdAndRole(gymId, "OWNER")
             .ifPresent(userRepository::delete);
-            renewalLogRepository.deleteByGymId(gymId);
+
+    // Finally delete gym
             gymRepository.delete(gym);
     }
 
