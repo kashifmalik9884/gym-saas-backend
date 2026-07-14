@@ -82,7 +82,7 @@ public class SaasAdminController {
     public ResponseEntity<GymResponse> activateGym(@PathVariable Long gymId) {
         return ResponseEntity.ok(saasAdminService.activateGym(gymId));
     }
-    @DeleteMapping("/api/saas-admin/gyms/{id}")
+    @DeleteMapping("/gyms/{id}")
     public ResponseEntity<Void> deleteGym(@PathVariable Long id) {
         saasAdminService.deleteGym(id);
         return ResponseEntity.noContent().build();
