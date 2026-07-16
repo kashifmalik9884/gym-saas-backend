@@ -121,6 +121,8 @@ public CorsConfigurationSource corsConfigurationSource() {
     configuration.setAllowedOrigins(List.of(
             "http://localhost:5173",
             "http://localhost:3000",
+            "http://localhost",
+            "https://localhost",
             "https://gym-saas.app",       // Main root domain
             "https://www.gym-saas.app"  
     ));
