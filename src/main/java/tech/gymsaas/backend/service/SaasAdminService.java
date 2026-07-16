@@ -13,6 +13,7 @@ import tech.gymsaas.backend.repository.GymRenewalLogRepository;
 import tech.gymsaas.backend.repository.GymRepository;
 import tech.gymsaas.backend.repository.SaasAdminUserRepository;
 import tech.gymsaas.backend.repository.UserRepository;
+import tech.gymsaas.backend.repository.RefreshTokenRepository;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -28,18 +29,21 @@ public class SaasAdminService {
     private final UserRepository userRepository;
     private final SaasAdminUserRepository saasAdminUserRepository;
     private final PasswordEncoder passwordEncoder;
+    private final RefreshTokenRepository refreshTokenRepository;
 
-    public SaasAdminService(GymRepository gymRepository,
-                            GymRenewalLogRepository renewalLogRepository,
-                            UserRepository userRepository,
-                            SaasAdminUserRepository saasAdminUserRepository,
-                            PasswordEncoder passwordEncoder) {
-        this.gymRepository = gymRepository;
-        this.renewalLogRepository = renewalLogRepository;
-        this.userRepository = userRepository;
-        this.saasAdminUserRepository = saasAdminUserRepository;
-        this.passwordEncoder = passwordEncoder;
-    }
+  public SaasAdminService(GymRepository gymRepository,
+                        GymRenewalLogRepository renewalLogRepository,
+                        UserRepository userRepository,
+                        SaasAdminUserRepository saasAdminUserRepository,
+                        RefreshTokenRepository refreshTokenRepository,
+                        PasswordEncoder passwordEncoder) {
+    this.gymRepository = gymRepository;
+    this.renewalLogRepository = renewalLogRepository;
+    this.userRepository = userRepository;
+    this.saasAdminUserRepository = saasAdminUserRepository;
+    this.refreshTokenRepository = refreshTokenRepository;
+    this.passwordEncoder = passwordEncoder;
+}
 
     @Transactional(readOnly = true)
     public List<GymResponse> getAllGyms() {
@@ -110,6 +114,28 @@ public class SaasAdminService {
                 .orElseThrow(() -> new ResourceNotFoundException("Gym not found"));
         return toResponse(gym);
     }
+  @Transactional
+    public void deleteGym(Long gymId) {
+    Gym gym = gymRepository.findById(gymId)
+            .orElseThrow(() -> new ResourceNotFoundException("Gym not found"));
+
+    // 1. Find OWNER user for this gym
+            var ownerOpt = userRepository.findByGymIdAndRole(gymId, "OWNER");
+
+            ownerOpt.ifPresent(owner -> {
+        // 2. Delete all refresh tokens for this user to satisfy FK constraint
+            refreshTokenRepository.deleteByUser_Id(owner.getId());
+
+        // 3. Delete the owner user
+            userRepository.delete(owner);
+            });
+
+    // 4. Delete renewal logs for this gym (if FK exists)
+        renewalLogRepository.deleteByGym_Id(gymId);
+
+    // 5. Finally delete the gym
+        gymRepository.delete(gym);
+}
 
     @Transactional(isolation = org.springframework.transaction.annotation.Isolation.READ_COMMITTED)
     public GymResponse createGym(CreateGymRequest request) {

@@ -24,4 +24,6 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Long> {
     List<Attendance> findByMember_IdAndGym_IdOrderByDateDescIdDesc(Long memberId, Long gymId);
 
     long countByGym_IdAndDate(Long gymId, LocalDate date);
+    void deleteByGym_Id(Long gymId);
+
 }

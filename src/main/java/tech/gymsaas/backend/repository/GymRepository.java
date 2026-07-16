@@ -14,4 +14,5 @@ public interface GymRepository extends JpaRepository<Gym, Long> {
     boolean existsByOwnerEmailIgnoreCase(String ownerEmail);
     List<Gym> findByStatusIgnoreCaseOrderByCreatedAtDesc(String status);
     List<Gym> findByAccessEndDateBeforeOrderByAccessEndDateAsc(LocalDate date);
+    
 }

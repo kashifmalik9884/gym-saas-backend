@@ -82,7 +82,11 @@ public class SaasAdminController {
     public ResponseEntity<GymResponse> activateGym(@PathVariable Long gymId) {
         return ResponseEntity.ok(saasAdminService.activateGym(gymId));
     }
-
+    @DeleteMapping("/gyms/{id}")
+    public ResponseEntity<Void> deleteGym(@PathVariable Long id) {
+        saasAdminService.deleteGym(id);
+        return ResponseEntity.noContent().build();
+    }
 
     @GetMapping("/renewals")
     public ResponseEntity<RenewalDashboardResponse> getRenewalsDashboard() {
